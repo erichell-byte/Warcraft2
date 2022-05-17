@@ -12,7 +12,7 @@ namespace MyProject
         List<Character> _goToSelect;
         List<Character> _gosSelected;
         BoxCollider2D boxCollider;
-        public AudioManager audioManager;
+        // public AudioManager audioManager;
 
         private void Awake()
         {
@@ -41,8 +41,8 @@ namespace MyProject
                 _goToSelect.Add(character);
             }
 
-            if (collision.gameObject.CompareTag("Player"))
-                audioManager = collision.gameObject.GetComponent<AudioManager>();
+            // if (collision.gameObject.CompareTag("Player"))
+                // audioManager = collision.gameObject.GetComponent<AudioManager>();
         }
 
         private void OnTriggerExit2D(Collider2D collision)
@@ -94,8 +94,8 @@ namespace MyProject
             }
 
             ActiveEdges(false);
-            if (audioManager != null)
-                audioManager.PlayAudioSelected(Random.Range(0, audioManager.clipsSelected.Length));
+            // if (audioManager != null)
+            //     audioManager.PlayAudioSelected(Random.Range(0, audioManager.clipsSelected.Length));
         }
     }
 }

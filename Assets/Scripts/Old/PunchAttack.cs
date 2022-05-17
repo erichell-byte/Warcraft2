@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace MyProject
 {
-    public class PunchAttack : MonoBehaviour, IAttack
+    public class PunchAttack : MonoBehaviour
     {
         private enum State {
             Normal,
@@ -27,7 +27,7 @@ namespace MyProject
             GetComponent<IMoveVelocity>().Enable();
         }
         
-        public void Attack(Vector3 attackDir) {
+        public void Attack() {
             // Attack
             SetStateAttacking();
             

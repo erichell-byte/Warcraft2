@@ -47,6 +47,7 @@ namespace MyProject
                 Collider2D[] collider2DArray = Physics2D.OverlapAreaAll(startPosition, UtilsClass.GetMouseWorldPosition());
                 foreach (UnitRTS unitRts in selectedUnitRTSList)
                 {
+                    if (unitRts != null)
                     unitRts.SetSelectedVisible(false);
                 }
                 selectedUnitRTSList.Clear();
@@ -57,10 +58,15 @@ namespace MyProject
                     {
                         unitRTS.SetSelectedVisible(true);
                         selectedUnitRTSList.Add(unitRTS);
+                        SoundManager.PlaySound(SoundManager.Sound.PlayerSelected);
                     }
                 }
-                Debug.Log(selectedUnitRTSList.Count);
-                SoundManager.PlaySound(SoundManager.Sound.PlayerSelected);
+                // Debug.Log(selectedUnitRTSList.Count);
+                
+            }
+            if (Input.GetKey(KeyCode.Escape))
+            {
+                Application.Quit();
             }
         }
     }

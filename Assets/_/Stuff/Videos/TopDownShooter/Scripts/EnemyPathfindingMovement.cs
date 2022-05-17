@@ -53,16 +53,16 @@ namespace TopDownShooter {
                     moveDir = (targetPosition - GetPosition()).normalized;
                     //Debug.Log(moveDir + " " + targetPosition + " " + Vector3.Distance(GetPosition(), targetPosition));
                     lastMoveDir = moveDir;
-                    enemyMain.CharacterAnims.PlayMoveAnim(moveDir);
+                    // enemyMain.CharacterAnims.PlayMoveAnim(moveDir);
                 } else {
                     currentPathIndex++;
                     if (currentPathIndex >= pathVectorList.Count) {
                         StopMoving();
-                        enemyMain.CharacterAnims.PlayIdleAnim();
+                        // enemyMain.CharacterAnims.PlayIdleAnim();
                     }
                 }
             } else {
-                enemyMain.CharacterAnims.PlayIdleAnim();
+                // enemyMain.CharacterAnims.PlayIdleAnim();
             }
         }
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace MyProject
@@ -13,30 +14,38 @@ namespace MyProject
         private void Start()
         {
             _healthSystem = new HealthSystem(healhMax);
-            // Transform healthBarTransform = transform.Find("phHealthBar");
-            // Instantiate(pfHealthBar, new Vector3(transform.position.x, transform.position.y + 0.5f), Quaternion.identity);
             HealthBar healthBar = pfHealthBar.GetComponent<HealthBar>();
             healthBar.Setup(_healthSystem);
-            // Debug.Log("Health:" + _healthSystem.GetHealthPercent());
-            // _healthSystem.Damage(100);
-            
-            // Debug.Log("Health:" + _healthSystem.GetHealthPercent());
-        }
-
-        private void Update()
-        {
-            // if (_healthSystem.GetHealth() == 0)
-            //     Destroy(gameObject);
         }
 
 
         public void TakeDamage(int damage)
         {
             _healthSystem.Damage(damage);
-            if (_healthSystem.GetHealth() == 0)
+            Debug.Log(gameObject.name + " health is "+ _healthSystem.GetHealth());
+            if (gameObject.CompareTag("OrcTown"))
             {
+                GlobalEventManager.SendTownUnderAttack(gameObject);
+            }
+            if (_healthSystem.GetHealth() <= 0)
+            {
+                if (gameObject.name == "HumanMainTown")
+                {
+                    Debug.Log("ORCS WIN THIS BATTLE");
+                    Time.timeScale = 0;
+                }
+                else if (gameObject.name == "OrcMainTown")
+                {
+                    Debug.Log("HUMANS WIN THIS BATTLE");
+                    Time.timeScale = 0;
+                }
                 Destroy(gameObject);
             }
+        }
+
+        public int GetHealth()
+        {
+            return (_healthSystem.GetHealth());
         }
     }
 }

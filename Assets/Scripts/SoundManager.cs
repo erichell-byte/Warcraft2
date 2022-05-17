@@ -12,6 +12,9 @@ namespace MyProject
             PlayerMove,
             PlayerSelected,
             PlayerDied,
+            OrcMove,
+            OrcSelected,
+            OrcDied
             
         }
 
@@ -23,6 +26,7 @@ namespace MyProject
         {
             soundTimerDictionary = new Dictionary<Sound, float>();
             soundTimerDictionary[Sound.PlayerMove] = 0f;
+            soundTimerDictionary[Sound.OrcMove] = 0f;
         }
 
         // 3D sound
@@ -63,7 +67,7 @@ namespace MyProject
                     if (soundTimerDictionary.ContainsKey(sound))
                     {
                         float lastTimePlayed = soundTimerDictionary[sound];
-                        float playerMoveTimerMax = 1f;
+                        float playerMoveTimerMax = 3f;
                         if (lastTimePlayed + playerMoveTimerMax < Time.time)
                         {
                             soundTimerDictionary[sound] = Time.time;
@@ -74,7 +78,23 @@ namespace MyProject
                     } else
                     {
                         return true;
-                    } 
+                    }
+                case Sound.OrcMove:
+                    if (soundTimerDictionary.ContainsKey(sound))
+                    {
+                        float lastTimePlayed = soundTimerDictionary[sound];
+                        float playerMoveTimerMax = 3f;
+                        if (lastTimePlayed + playerMoveTimerMax < Time.time)
+                        {
+                            soundTimerDictionary[sound] = Time.time;
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    } else
+                    {
+                        return true;
+                    }
             }
         }
 

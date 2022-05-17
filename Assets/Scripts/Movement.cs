@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -12,12 +13,18 @@ namespace MyProject
         [SerializeField] private float speed = 5f;
         private Vector3 _destination;
         private Transform selectedGameObject;
-        public AttackSword AttackSword;
-        private float _hitLast = 0;
-        public float _hitDelay = 3f;
+        [SerializeField]
+        private BasicAttack basicAttack;
+
+
+        public GameObject target;
+        private List<TownRTS> selectedTownList;
+        private List<OrcRTS> selectedOrcList;
 
         void Awake()
         {
+            selectedTownList = new List<TownRTS>();
+            selectedOrcList = new List<OrcRTS>();
             _destination = transform.position;
             selectedGameObject = gameObject.transform.Find("Selected");
         }
@@ -25,6 +32,7 @@ namespace MyProject
         void Update()
         {
             CheckNewDestiantion();
+            CheckEnemyDestination();
             Move();
         }
 
@@ -36,6 +44,39 @@ namespace MyProject
                 _destination = Camera.main.ScreenToWorldPoint(mousePosition);
                 _destination.z = mousePosition.z;
                 _destination = WorldpointToSquaredPoint(_destination);
+                if (target != null)
+                {
+                    _destination = target.transform.position;
+                }
+                foreach (TownRTS townRTS in selectedTownList)
+                {
+                    if (townRTS != null)
+                        townRTS.SetSelectedVisible(false);
+                }
+                foreach (OrcRTS orcRTS in selectedOrcList)
+                {   
+                    if (orcRTS != null)
+                        orcRTS.SetSelectedVisible(false);
+                }
+                selectedTownList.Clear();
+                selectedOrcList.Clear();
+                Collider2D[] collider2DArray = Physics2D.OverlapAreaAll(_destination, _destination);
+                foreach (Collider2D collider2D in collider2DArray)
+                {
+                    OrcRTS orcRTS = collider2D.GetComponent<OrcRTS>();  
+                    TownRTS townRTS = collider2D.GetComponent<TownRTS>();
+                    if (townRTS != null)
+                    {
+                        townRTS.SetSelectedVisible(true);
+                        selectedTownList.Add(townRTS);
+
+                    }
+                    else if (orcRTS != null)
+                    {
+                        orcRTS.SetSelectedVisible(true);
+                        selectedOrcList.Add(orcRTS);
+                    }
+                }
             }
         }
 
@@ -100,7 +141,7 @@ namespace MyProject
                 //transform.position = Vector3.MoveTowards(transform.position, _destination, speed * Time.deltaTime);
                 GetComponent<Animator>().SetFloat("MoveX", movement.x);
                 GetComponent<Animator>().SetFloat("MoveY", movement.y);
-                SoundManager.PlaySound(SoundManager.Sound.PlayerMove);
+                 SoundManager.PlaySound(SoundManager.Sound.PlayerMove);
             }
             else
             {
@@ -111,31 +152,34 @@ namespace MyProject
 
         private void OnTriggerEnter2D(Collider2D col)
         {
-            if (col.gameObject.CompareTag("OrcTown"))
+            if ((selectedTownList.Contains(col.gameObject.GetComponent<TownRTS>()) ||
+                 selectedOrcList.Contains(col.gameObject.GetComponent<OrcRTS>())))
             {
                 GetComponent<Animator>().SetBool("isAttack", true);
-                
+                enabled = false;
+                enabled = true;
             }
         }
 
         private void OnTriggerStay2D(Collider2D col)
         {
-            if (col.gameObject.CompareTag("OrcTown"))
+            if ((selectedTownList.Contains(col.gameObject.GetComponent<TownRTS>()) || 
+                selectedOrcList.Contains(col.gameObject.GetComponent<OrcRTS>())))
             {
-                if (Time.time - _hitLast < _hitDelay)
-                    return;
-                
-                GetComponent<Animator>().SetBool("isAttack", true);
-                col.GetComponent<GameHandler>().TakeDamage(4);
-
-                _hitLast = Time.time;
+                basicAttack.Attack(col);
             }
         }
-        private void OnTriggerExit2D(Collider2D col)
+        private void OnTriggerExit2D(Collider2D other)
         {
-            if (col.gameObject.CompareTag("OrcTown"))
+            basicAttack.FinishAttack();
+        }
+
+        private void CheckEnemyDestination()
+        {
+            foreach (OrcRTS orcRTS in selectedOrcList)
             {
-                GetComponent<Animator>().SetBool("isAttack", false);
+                if (orcRTS != null)
+                    _destination = orcRTS.transform.position;
             }
         }
     }

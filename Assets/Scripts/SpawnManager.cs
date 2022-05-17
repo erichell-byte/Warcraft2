@@ -8,9 +8,14 @@ namespace MyProject
     public class SpawnManager : MonoBehaviour
     {
         [SerializeField] private GameObject charPrefab;
+        
+        [SerializeField]
+        private float _charX;
+        [SerializeField]
+        private float _charY;
 
-        private float _charX = -6.3f;
-        private float _charY = 2f;
+        private float maxX;
+        private float maxY;
 
         private float _spawnHumanTime = 10f;
 
@@ -35,16 +40,20 @@ namespace MyProject
             {
                 Instantiate(charPrefab, new Vector3(_charX, _charY, 0), Quaternion.identity);
                 _charX += 0.5f;
-                if (_charX >= -3.6f)
+                maxX += 0.5f;
+                if (maxX > 3.0f)
                 {
                     _charY -= 0.5f;
-                    _charX = -6.3f;
+                    maxY -= 0.5f;
+                    _charX -= 3.5f;
+                    maxX = 0;
                 }
 
-                if (_charY <= 0)
+                if (maxY <= -2)
                 {
-                    _charX = -6.3f;
-                    _charY = 2f;
+                    _charX -= 3.5f;
+                    _charY += 2f;
+                    maxY = 0;
                 }
 
                 yield return new WaitForSeconds(_spawnHumanTime);
